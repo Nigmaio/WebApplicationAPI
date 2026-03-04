@@ -34,15 +34,45 @@ namespace WebApplicationAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Models.Book> CreateBook(Models.Book book)
+        public ActionResult<Models.Book> AddBook(Models.Book newBook)
         {
-            if (book == null)
+            if (newBook == null)
             {
                 return BadRequest();
+
             }
-            book.Id = Books.Max(x => x.Id) + 1;
-            Books.Add(book);
-            return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
+            Books.Add(newBook);
+            return CreatedAtAction(nameof(GetBookById), new { id = newBook.Id }, newBook);
 
         }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateBook(int id, Models.Book updatedBook)
+        {
+            var book = Books.FirstOrDefault(x => x.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            book.Id = updatedBook.Id;
+            book.Title = updatedBook.Title;
+            book.Author = updatedBook.Author;
+            book.YearPublished = updatedBook.YearPublished;
+            book.Description = updatedBook.Description;
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBook(int id) {
+            var book = Books.FirstOrDefault(x => x.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            Books.Remove(book);
+            return NoContent();
+        }
+    }
 }
