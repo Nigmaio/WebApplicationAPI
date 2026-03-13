@@ -53,6 +53,31 @@ app.MapPost("/api/authors", async (Author author, SqlConnection db) =>
     return Results.Created($"/api/authors/{newId}", author);
 });
 
+// Task 3: Delete an Author
+app.MapDelete("/api/authors/{id}", async (int id, SqlConnection db) =>
+{
+    var existing = await db.QuerySingleOrDefaultAsync<Author>(
+        "SELECT * FROM Authors WHERE AuthorId = @Id", new { Id = id });
+
+    if (existing is null)
+        return Results.NotFound($"Author with ID {id} not found.");
+
+    await db.ExecuteAsync("DELETE FROM Authors WHERE AuthorId = @Id", new { Id = id });
+
+    return Results.NoContent();
+});
+
+// Task 4: Get a single Author by ID
+app.MapGet("/api/authors/{id}", async (int id, SqlConnection db) =>
+{
+    var author = await db.QuerySingleOrDefaultAsync<Author>(
+        "SELECT * FROM Authors WHERE AuthorId = @Id", new { Id = id });
+
+    return author is null
+        ? Results.NotFound($"Author with ID {id} not found.")
+        : Results.Ok(author);
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
