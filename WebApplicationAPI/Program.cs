@@ -44,6 +44,15 @@ app.MapGet("/api/authors", async (SqlConnection db) =>
     return Results.Ok(authors);
 });
 
+// Task 2: Create a new Author
+app.MapPost("/api/authors", async (Author author, SqlConnection db) =>
+{
+    var sql = "INSERT INTO Authors (AuthorId, FirstName, LastName, Country) VALUES (@AuthorId, @FirstName, @LastName, @Country); SELECT SCOPE_IDENTITY();";
+    var newId = await db.ExecuteScalarAsync<int>(sql, author);
+    author.AuthorId = newId;
+    return Results.Created($"/api/authors/{newId}", author);
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
