@@ -19,16 +19,13 @@ builder.Configuration.GetConnectionString("BookshopDB"));
 
 // Before builder.Build()
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// After builder.Build()
-app.UseSwagger();
-app.UseSwaggerUI();
 
 
-trydotnet rund
+
+try
 {
     await testConnection.OpenAsync();
     Console.WriteLine("Database connection successful");
